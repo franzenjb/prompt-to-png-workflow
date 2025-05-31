@@ -10,7 +10,7 @@ on:
 
 jobs:
   generate_report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Using the latest Ubuntu runner
     permissions:
       contents: write # Required to commit files back to the repository
 
@@ -21,15 +21,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # Or a newer LTS version
+          node-version: '18' 
 
       - name: Install dependencies for Puppeteer/Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
+          # Attempting to install libasound2t64 explicitly
+          # and then the rest of the common dependencies for Puppeteer
+          sudo apt-get install -y --no-install-recommends \
+            libasound2t64 \
             ca-certificates \
             fonts-liberation \
-            libasound2t64 \ # <-- This is the corrected package name
             libatk-bridge2.0-0 \
             libatk1.0-0 \
             libc6 \
