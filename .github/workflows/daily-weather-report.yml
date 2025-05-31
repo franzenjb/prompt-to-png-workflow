@@ -5,8 +5,6 @@ on:
     # Runs at 10:00 UTC daily.
     # For St. Petersburg, FL (currently EDT, UTC-4), this is 6:00 AM.
     # During EST (UTC-5), 10:00 UTC would be 5:00 AM.
-    # If you want it strictly 6:00 AM local time year-round, you'd use 10:00 UTC during EDT
-    # and 11:00 UTC during EST. For now, 10:00 UTC is set.
     - cron: '0 10 * * *'
   workflow_dispatch: # Allows manual triggering from the Actions tab for testing
 
@@ -31,7 +29,7 @@ jobs:
           sudo apt-get install -y \
             ca-certificates \
             fonts-liberation \
-            libasound2 \
+            libasound2t64 \ # <-- This is the corrected package name
             libatk-bridge2.0-0 \
             libatk1.0-0 \
             libc6 \
