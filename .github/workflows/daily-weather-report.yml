@@ -1,0 +1,91 @@
+name: Generate Daily Weather Report PNG
+
+on:
+  schedule:
+    # Runs at 10:00 UTC daily.
+    # For St. Petersburg, FL (currently EDT, UTC-4), this is 6:00 AM.
+    # During EST (UTC-5), 10:00 UTC would be 5:00 AM.
+    # If you want it strictly 6:00 AM local time year-round, you'd use 10:00 UTC during EDT
+    # and 11:00 UTC during EST. For now, 10:00 UTC is set.
+    - cron: '0 10 * * *'
+  workflow_dispatch: # Allows manual triggering from the Actions tab for testing
+
+jobs:
+  generate_report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to commit files back to the repository
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Or a newer LTS version
+
+      - name: Install dependencies for Puppeteer/Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ca-certificates \
+            fonts-liberation \
+            libasound2 \
+            libatk-bridge2.0-0 \
+            libatk1.0-0 \
+            libc6 \
+            libcairo2 \
+            libcups2 \
+            libdbus-1-3 \
+            libexpat1 \
+            libfontconfig1 \
+            libgbm1 \
+            libgcc1 \
+            libglib2.0-0 \
+            libgtk-3-0 \
+            libnspr4 \
+            libnss3 \
+            libpango-1.0-0 \
+            libpangocairo-1.0-0 \
+            libstdc++6 \
+            libx11-6 \
+            libx11-xcb1 \
+            libxcb1 \
+            libxcomposite1 \
+            libxcursor1 \
+            libxdamage1 \
+            libxext6 \
+            libxfixes3 \
+            libxi6 \
+            libxrandr2 \
+            libxrender1 \
+            libxss1 \
+            libxtst6 \
+            lsb-release \
+            wget \
+            xdg-utils
+
+      - name: Install Node.js dependencies (from package.json)
+        run: npm install
+
+      - name: Run the Report Generation Script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node generate-report.js
+
+      - name: Configure Git User
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Commit and Push Generated Files
+        run: |
+          git add ./output/*
+          if git diff --staged --quiet; then
+            echo "No changes to report files. Output might be identical."
+          else
+            git commit -m "feat: Update daily weather report files - $(date +'%Y-%m-%d %H:%M:%S UTC')"
+            git push
+            echo "Report files committed and pushed."
+          fi
