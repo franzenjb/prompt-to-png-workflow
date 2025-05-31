@@ -1,1 +1,23 @@
-
+{
+  "name": "prompt-to-png-workflow",
+  "version": "1.0.0",
+  "description": "Generates a daily weather report PNG using OpenAI and Puppeteer based on Claude's script.",
+  "main": "generate-report.js",
+  "scripts": {
+    "start": "node generate-report.js"
+  },
+  "keywords": [
+    "weather",
+    "report",
+    "png",
+    "openai",
+    "puppeteer",
+    "automation"
+  ],
+  "author": "franzenjb",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "puppeteer": "^22.10.0"
+  }
+}
